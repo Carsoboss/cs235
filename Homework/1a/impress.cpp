@@ -1,45 +1,37 @@
 #include <iostream>
 #include <vector>
-#include <stdexcept>
+#include <algorithm>
+#include <string>
 
-class Book
+template <typename T>
+class TodoList
 {
-public:
-    std::string title, author;
-    int year;
-    Book(std::string t, std::string a, int y) : title(t), author(a), year(y) {}
-};
-
-class Library
-{
-    std::vector<Book> books;
+private:
+    std::vector<T> tasks;
 
 public:
-    void addBook(const Book &b) { books.push_back(b); }
-    void displayBooks()
+    void addTask(const T &task)
     {
-        for (auto &b : books)
-            std::cout << "Title: " << b.title << ", Author: " << b.author << ", Year: " << b.year << std::endl;
+        tasks.push_back(task);
     }
-    Book *searchBook(const std::string &title)
+
+    void displayTasks()
     {
-        for (auto &b : books)
-            if (b.title == title)
-                return &b;
-        return nullptr;
+        std::for_each(tasks.begin(), tasks.end(), [](const T &task)
+                      { std::cout << task << std::endl; });
     }
 };
 
 int main()
 {
-    Library lib;
-    lib.addBook(Book("The Great Gatsby", "F. Scott Fitzgerald", 1925));
-    lib.addBook(Book("1984", "George Orwell", 1949));
-    lib.displayBooks();
+    TodoList<std::string> myTodoList;
 
-    Book *found = lib.searchBook("1984");
-    if (found)
-        std::cout << "Found: " << found->title << std::endl;
-    else
-        std::cout << "Book not found" << std::endl;
+    myTodoList.addTask("Finish C++ project");
+    myTodoList.addTask("Read about lambda expressions");
+    myTodoList.addTask("Practice STL");
+
+    std::cout << "My Todo List:\n";
+    myTodoList.displayTasks();
+
+    return 0;
 }
