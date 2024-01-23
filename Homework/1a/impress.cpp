@@ -1,37 +1,70 @@
 #include <iostream>
+#include <memory>
 #include <vector>
-#include <algorithm>
-#include <string>
+#include <stdexcept>
 
-template <typename T>
-class TodoList
+// Base class Animal
+class Animal
 {
-private:
-    std::vector<T> tasks;
-
 public:
-    void addTask(const T &task)
-    {
-        tasks.push_back(task);
-    }
+    virtual ~Animal() = default;
 
-    void displayTasks()
+    virtual void makeSound() const = 0; // Pure virtual function
+};
+
+// Derived class Dog
+class Dog : public Animal
+{
+public:
+    void makeSound() const override
     {
-        std::for_each(tasks.begin(), tasks.end(), [](const T &task)
-                      { std::cout << task << std::endl; });
+        std::cout << "Dog says: Woof!" << std::endl;
     }
 };
 
+// Derived class Cat
+class Cat : public Animal
+{
+public:
+    void makeSound() const override
+    {
+        std::cout << "Cat says: Meow!" << std::endl;
+    }
+};
+
+// Function to demonstrate polymorphism
+void animalSound(const Animal &animal)
+{
+    animal.makeSound();
+}
+
 int main()
 {
-    TodoList<std::string> myTodoList;
+    try
+    {
+        // Creating a vector of smart pointers to Animal objects
+        std::vector<std::unique_ptr<Animal>> zoo;
 
-    myTodoList.addTask("Finish C++ project");
-    myTodoList.addTask("Read about lambda expressions");
-    myTodoList.addTask("Practice STL");
+        // Adding animals to the zoo
+        zoo.push_back(std::make_unique<Dog>());
+        zoo.push_back(std::make_unique<Cat>());
 
-    std::cout << "My Todo List:\n";
-    myTodoList.displayTasks();
+        // Demonstrating polymorphism
+        for (const auto &animal : zoo)
+        {
+            animalSound(*animal);
+        }
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
+    }
+    catch (...)
+    {
+        std::cerr << "An unknown error has occurred" << std::endl;
+        return 2;
+    }
 
     return 0;
 }
